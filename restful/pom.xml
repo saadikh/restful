@@ -1,0 +1,276 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.inria.fr.ns</groupId>
+  <artifactId>projet-xml-TDFD</artifactId>
+  <packaging>war</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>projet-mgag Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <kotlin.version>1.2.20</kotlin.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- pour Jetty et rest -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>9.2.3.v20140905</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>9.2.3.v20140905</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>2.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet-core</artifactId>
+            <version>2.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-jetty-http</artifactId>
+            <version>2.7</version>
+        </dependency>
+        <!-- dep xquery-->
+
+        <dependency>
+            <artifactId>exist-xqj</artifactId>
+            <groupId>net.xqj.exis</groupId>
+            <version>1.0.1</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/exist-xqj-1.0.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <artifactId>xqj2</artifactId>
+            <groupId>xqj2</groupId>
+            <version>0.0.1</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/xqj2-0.0.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <artifactId>xqjapi</artifactId>
+            <groupId>xqjapi</groupId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/xqjapi.jar</systemPath>
+        </dependency>
+
+        <!-- transformer le resultat en Json -->
+        <dependency>
+            <groupId>com.owlike</groupId>
+            <artifactId>genson</artifactId>
+            <version>0.99</version>
+        </dependency>
+
+        <!-- for json -->
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20090211</version>
+        </dependency>
+
+        <!-- for bindingDate-->
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.2.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-xjc</artifactId>
+            <version>2.2.11</version>
+        </dependency>
+
+        <!-- <dependency>
+            <groupId>org.jvnet.jaxb2_commons</groupId>
+            <artifactId>jaxb2-basics-annotate</artifactId>
+        </dependency> -->
+
+    </dependencies>
+    <build>
+        <finalName>projet-mgag</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>9.4.8.v20171121</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>src</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.13.3</version>
+
+                <executions>
+                    <execution>
+                        <id>equipes</id>
+                       <!--  <phase>generate-sources</phase> -->
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+
+                            <schemaDirectory>src/main/resources/xsd</schemaDirectory>
+                            <schemaIncludes>
+                                <include>bastri.xsd</include>
+                            </schemaIncludes>
+
+                            <bindingDirectory>src/main/resources/xjb</bindingDirectory>
+                            <bindingIncludes>
+                                <include>bindingDate.xjb</include>
+                                 <include>bindingsClassName.xjb</include>
+                                <include>bindingsAttributeType.xjb</include>
+                            </bindingIncludes>
+
+                            <generateDirectory>src/main/java</generateDirectory>
+                            <generatePackage>org.inria.fr.ns.sr</generatePackage>
+                        <!--
+                            <extension>true</extension>
+                            <args>
+                                <arg>-Xannotate</arg>
+                            </args>
+                            <plugins>
+                                <plugin>
+                                    <groupId>org.jvnet.jaxb2_commons</groupId>
+                                    <artifactId>jaxb2-basics-annotate</artifactId>
+                                    <version>1.0.4</version>
+                                </plugin>
+                                <plugin>
+                                    <groupId>org.jvnet.jaxb2_commons</groupId>
+                                    <artifactId>jaxb2-annotate-plugin-test-annox-annotations</artifactId>
+                                    <version>1.0.0</version>
+                                </plugin>
+                            </plugins>
+                            -->
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>centres</id>
+                       <!--  <phase>generate-sources</phase> -->
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+
+                            <schemaDirectory>src/main/resources/xsd</schemaDirectory>
+                            <schemaIncludes>
+                                <include>bastriCris.xsd</include>
+                            </schemaIncludes>
+
+                            <bindingDirectory>src/main/resources/xjb</bindingDirectory>
+                            <bindingIncludes>
+                                <include>bindingDate.xjb</include>
+                            </bindingIncludes>
+
+                            <generateDirectory>src/main/java</generateDirectory>
+                            <generatePackage>org.inria.fr.ns.cr</generatePackage>
+
+                            <!--
+                            <extension>true</extension>
+                            <args>
+                                <arg>-Xannotate</arg>
+                            </args>
+                            <plugins>
+                                <plugin>
+                                    <groupId>org.jvnet.jaxb2_commons</groupId>
+                                    <artifactId>jaxb2-basics-annotate</artifactId>
+                                    <version>1.0.4</version>
+                                </plugin>
+                                <plugin>
+                                    <groupId>org.jvnet.jaxb2_commons</groupId>
+                                    <artifactId>jaxb2-annotate-plugin-test-annox-annotations</artifactId>
+                                    <version>1.0.0</version>
+                                </plugin>
+                            </plugins>
+                            -->
+
+                        </configuration>
+                    </execution>
+                </executions>
+
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jvmTarget>1.8</jvmTarget>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>testCompile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
+    </build>
+</project>
